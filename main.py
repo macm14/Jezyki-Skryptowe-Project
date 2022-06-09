@@ -4,38 +4,36 @@ import re
 import time
 import zipfile
 import io
-
-max_number_of_files = 5
+import yaml
 
 
 def clean_start_folder():
     # przenosze sie do folderu startowego
-    os.chdir("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/start")
+    os.chdir(config['start_path'])
 
     # w liscie zapisuje pliki ktore sa w folderze start
     start_folder_files = list(os.listdir())
-    # print(start_folder_files)
 
     for file_name in start_folder_files:
         regex = re.split("[.]", file_name)
         if regex[1] == 'txt' or regex[1] == 'pdf' or regex[1] == 'docx':
-            shutil.move("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/start/" + file_name,
-                        "C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text")
-            control_number_of_files("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text")
+            shutil.move(config['start_path'] + '/' + file_name,
+                        config['text_path'])
+            control_number_of_files(config['text_path'])
         elif regex[1] == 'csv':
-            shutil.move("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/start/" + file_name,
-                        "C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data")
-            control_number_of_files("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data")
+            shutil.move(config['start_path'] + '/' + file_name,
+                        config['data_path'])
+            control_number_of_files(config['data_path'])
         else:
-            shutil.move("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/start/" + file_name,
-                        "C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/others")
-            control_number_of_files("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/others")
+            shutil.move(config['start_path'] + '/' + file_name,
+                        config['others_path'])
+            control_number_of_files(config['others_path'])
 
 
 def control_number_of_files(path):
     os.chdir(path)
     folder_files = list(os.listdir())
-    if len(folder_files) > max_number_of_files:
+    if len(folder_files) > config['max_number_of_files']:
         min_date = time.ctime(os.path.getctime(folder_files[0]))
         file_to_remove = folder_files[0]
         for file_name in folder_files:
@@ -88,7 +86,10 @@ def file_compress(inp_file_names, out_zip_file):
 
 if __name__ == '__main__':
 
-    file_compress(['rpe.xlsx'], 'test_zip.zip')
+    with open('config.yaml', 'r') as fp:
+        config = yaml.safe_load(fp)
+
+    # file_compress(['rpe.xlsx'], 'test_zip.zip')
     clean_start_folder()
     user_input = input('Program do zarządzania folderami.\n'
                        'Zrobiłem już porządek w folderach. Co chcesz zrobić następne?\n'
@@ -112,12 +113,12 @@ if __name__ == '__main__':
             user_input = input("Ktory folder chcesz wyswietlic:\n 1. text\n 2. data\n")
             match user_input:
                 case '1':
-                    print_folder_content("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text")
+                    print_folder_content(config['text_path'])
                     user_input = input("Który plik chcesz wyswietlić?\n")
-                    print_file_content("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text", user_input)
+                    print_file_content(config['test_path'], user_input)
                 case '2':
-                    print_folder_content("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data")
+                    print_folder_content(config['data_path'])
                     user_input = input("Który plik chcesz wyswietlić?\n")
-                    print_file_content("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data", user_input)
+                    print_file_content(config['data_path'], user_input)
 
 
