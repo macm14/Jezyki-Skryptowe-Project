@@ -1,6 +1,32 @@
-# tutaj można dodać komentarz
+# extensions that my program can control
+extensions:
+   txt
+   csv
+   docx
+   pdf
+   xlsx
+
+#folder names
+folder_names:
+   text
+   data
+   others
+
+#paths of folders used
 start_path: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/start
 text_path: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
 data_path: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
 others_path: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/others
-max_number_of_files: 5
+
+#paths for extensions
+txt: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
+docx: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
+pdf: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
+csv: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
+xlsx: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
+
+#max number of files in folder
+max_number_of_files: 10
+
+#max file size in bytes
+max_size_of_file: 30000
