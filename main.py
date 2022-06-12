@@ -17,14 +17,22 @@ def clean_start_folder():
 
     for file_name in start_folder_files:
         regex = re.split("[.]", file_name)
+        name = regex[0]
         extension = regex[1]
-        if extension in config['extensions']:
-            os.replace(config['start_path'] + '/' + file_name, config[extension] + '/' + file_name)
-            control_number_of_files(config[extension])
-            control_file_size(config[extension], file_name)
-        else:
-            os.replace(config['start_path'] + '/' + file_name, config['others_path'] + '/' + file_name)
-            control_number_of_files(config['others_path'])
+        for folder_name in config['important_folders'].split(' '):
+            if folder_name.lower() in name.lower():
+                os.replace(config['start_path'] + '/' + file_name, config[folder_name] + '/' + file_name)
+                break
+
+        # jezeli plik nie ma w nazwie nazwy folderu
+        if os.path.isfile(config['start_path'] + '/' + file_name):
+            if extension in config['extensions']:
+                os.replace(config['start_path'] + '/' + file_name, config[extension] + '/' + file_name)
+                control_number_of_files(config[extension])
+                control_file_size(config[extension], file_name)
+            else:
+                os.replace(config['start_path'] + '/' + file_name, config['others_path'] + '/' + file_name)
+                control_number_of_files(config['others_path'])
 
 
 def control_number_of_files(path):
@@ -42,7 +50,6 @@ def control_number_of_files(path):
 
 def control_file_size(path, file_name):
     os.chdir(path)
-    print(os.path.getsize(file_name))
     if os.path.getsize(file_name) > config['max_size_of_file']:
         file_compress(path, [file_name], file_name.split('.')[0] + '.zip')
         os.remove(file_name)
@@ -112,6 +119,7 @@ if __name__ == '__main__':
     with open('config.yaml', 'r') as fp:
         config = yaml.safe_load(fp)
 
+    print(config)
     clean_start_folder()
     user_input = input('Program do zarządzania folderami.\n'
                        'Zrobiłem już porządek w folderach. Co chcesz zrobić następne?\n'
@@ -137,25 +145,25 @@ if __name__ == '__main__':
 
         case '3':
             user_input = input("Na ktorym folderze chcesz operowac:\n 1. text\n 2. data\n")
-            path = ''
+            chosen_path = ''
             if user_input == '1':
-                path = config['text_path']
+                chosen_path = config['text_path']
             elif user_input == '2':
-                path = config['data_path']
+                chosen_path = config['data_path']
 
-            if path != '':
-                print_folder_content(path)
+            if chosen_path != '':
+                print_folder_content(chosen_path)
                 user_input = input("Co chcesz zrobic:\n "
                                    "1. Wyswietl zawartosc pliku\n 2. Kompresja plikow\n 3. Raport dla tego folderu.\n")
                 match user_input:
                     case '1':
                         user_input = input("Który plik chcesz wyswietlić?\n")
-                        print_file_content(path, user_input)
+                        print_file_content(chosen_path, user_input)
 
                     case '2':
                         user_input = input("Które pliki chcesz przenieść do zip?\n")
                         files_to_zip = user_input.split(' ')
                         user_input = input("Podaj nazwę pliku zip\n")
-                        file_compress(path, files_to_zip, user_input + '.zip')
+                        file_compress(chosen_path, files_to_zip, user_input + '.zip')
 
 
