@@ -6,6 +6,10 @@ extensions:
    pdf
    xlsx
 
+#if the file name contain folder name, then it is moved to this folder
+important_folders:
+   PWr
+
 #folder names
 folder_names:
    text
@@ -24,6 +28,9 @@ docx: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
 pdf: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
 csv: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
 xlsx: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
+
+#paths for names
+PWr: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/PWr
 
 #max number of files in folder
 max_number_of_files: 10
