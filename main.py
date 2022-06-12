@@ -5,6 +5,7 @@ import time
 import zipfile
 import io
 import yaml
+import openpyxl
 
 
 def clean_start_folder():
@@ -16,17 +17,13 @@ def clean_start_folder():
 
     for file_name in start_folder_files:
         regex = re.split("[.]", file_name)
-        if regex[1] == 'txt' or regex[1] == 'pdf' or regex[1] == 'docx':
-            shutil.move(config['start_path'] + '/' + file_name,
-                        config['text_path'])
-            control_number_of_files(config['text_path'])
-        elif regex[1] == 'csv':
-            shutil.move(config['start_path'] + '/' + file_name,
-                        config['data_path'])
-            control_number_of_files(config['data_path'])
+        extension = regex[1]
+        if extension in config['extensions']:
+            os.replace(config['start_path'] + '/' + file_name, config[extension] + '/' + file_name)
+            control_number_of_files(config[extension])
+            control_file_size(config[extension], file_name)
         else:
-            shutil.move(config['start_path'] + '/' + file_name,
-                        config['others_path'])
+            os.replace(config['start_path'] + '/' + file_name, config['others_path'] + '/' + file_name)
             control_number_of_files(config['others_path'])
 
 
@@ -40,8 +37,20 @@ def control_number_of_files(path):
             if min_date > time.ctime(os.path.getctime(file_name)):
                 min_date = time.ctime(os.path.getctime(file_name))
                 file_to_remove = file_name
-                # print(time.ctime(os.path.getctime(file_name)))
         os.remove(file_to_remove)
+
+
+def control_file_size(path, file_name):
+    os.chdir(path)
+    print(os.path.getsize(file_name))
+    if os.path.getsize(file_name) > config['max_size_of_file']:
+        file_compress(path, [file_name], file_name.split('.')[0] + '.zip')
+        os.remove(file_name)
+
+
+def print_folder_names():
+    for name in config['folder_names'].split(' '):
+        print(name)
 
 
 def print_folder_content(path):
@@ -53,21 +62,36 @@ def print_folder_content(path):
 
 
 def print_file_content(path, file_name):
+    if file_name.split('.')[1] == 'xlsx':
+        print_xlsx_file(path, file_name)
+        return
     os.chdir(path)
     with open(file_name, "r") as f:
         for line in f:
             print(line)
 
 
-def file_compress(inp_file_names, out_zip_file):
-    os.chdir("C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/start")
+def print_xlsx_file(path, file_name):
+    xlsx_file = path + '/' + file_name
+    wb_obj = openpyxl.load_workbook(xlsx_file)
+
+    sheet = wb_obj.active
+
+    for row in sheet.iter_rows(max_row=sheet.max_row):
+        for cell in row:
+            if cell.value is None:
+                print(end="\t")
+            else:
+                print(cell.value, end="\t")
+        print()
+
+
+def file_compress(path, inp_file_names, out_zip_file):
+    os.chdir(path)
     # Select the compression mode ZIP_DEFLATED for compression
     # or zipfile.ZIP_STORED to just store the file
     compression = zipfile.ZIP_DEFLATED
-    print(f" *** Input File name passed for zipping - {inp_file_names}")
 
-    # create the zip file first parameter path/name, second mode
-    print(f' *** out_zip_file is - {out_zip_file}')
     zf = zipfile.ZipFile(out_zip_file, mode="w")
 
     try:
@@ -80,7 +104,6 @@ def file_compress(inp_file_names, out_zip_file):
     except FileNotFoundError as e:
         print(f' *** Exception occurred during zip process - {e}')
     finally:
-        # Don't forget to close the file!
         zf.close()
 
 
@@ -89,14 +112,17 @@ if __name__ == '__main__':
     with open('config.yaml', 'r') as fp:
         config = yaml.safe_load(fp)
 
-    # file_compress(['rpe.xlsx'], 'test_zip.zip')
     clean_start_folder()
     user_input = input('Program do zarządzania folderami.\n'
                        'Zrobiłem już porządek w folderach. Co chcesz zrobić następne?\n'
-                       '1. Stwórz własny plik tekstowy.\n'
-                       '2. Wyswietl wybrany plik\n')
+                       '1. Spis folderów.\n'
+                       '2. Stwórz własny plik tekstowy.\n'
+                       '3. Działania na folderach.\n')
     match user_input:
         case '1':
+            print_folder_names()
+
+        case '2':
             user_input = input('Podaj nazwe pliku: ')
             try:
                 file = open(user_input, 'x')
@@ -109,16 +135,27 @@ if __name__ == '__main__':
             except FileExistsError:
                 print("Ten plik już istnieje")
 
-        case '2':
-            user_input = input("Ktory folder chcesz wyswietlic:\n 1. text\n 2. data\n")
-            match user_input:
-                case '1':
-                    print_folder_content(config['text_path'])
-                    user_input = input("Który plik chcesz wyswietlić?\n")
-                    print_file_content(config['test_path'], user_input)
-                case '2':
-                    print_folder_content(config['data_path'])
-                    user_input = input("Który plik chcesz wyswietlić?\n")
-                    print_file_content(config['data_path'], user_input)
+        case '3':
+            user_input = input("Na ktorym folderze chcesz operowac:\n 1. text\n 2. data\n")
+            path = ''
+            if user_input == '1':
+                path = config['text_path']
+            elif user_input == '2':
+                path = config['data_path']
+
+            if path != '':
+                print_folder_content(path)
+                user_input = input("Co chcesz zrobic:\n "
+                                   "1. Wyswietl zawartosc pliku\n 2. Kompresja plikow\n 3. Raport dla tego folderu.\n")
+                match user_input:
+                    case '1':
+                        user_input = input("Który plik chcesz wyswietlić?\n")
+                        print_file_content(path, user_input)
+
+                    case '2':
+                        user_input = input("Które pliki chcesz przenieść do zip?\n")
+                        files_to_zip = user_input.split(' ')
+                        user_input = input("Podaj nazwę pliku zip\n")
+                        file_compress(path, files_to_zip, user_input + '.zip')
 
 
