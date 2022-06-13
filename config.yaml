@@ -1,26 +1,27 @@
 # extensions that my program can control
 extensions:
-   txt
-   csv
-   docx
-   pdf
-   xlsx
+   - txt
+   - csv
+   - docx
+   - pdf
+   - xlsx
 
 #if the file name contain folder name, then it is moved to this folder
 important_folders:
-   PWr
+   - PWr
 
 #folder names
 folder_names:
-   text
-   data
-   others
+   - text
+   - data
+   - others
+   - PWr
 
 #paths of folders used
-start_path: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/start
-text_path: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
-data_path: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
-others_path: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/others
+start: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/start
+text: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
+data: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
+others: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/others
 
 #paths for extensions
 txt: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
