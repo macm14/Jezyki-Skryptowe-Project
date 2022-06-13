@@ -6,11 +6,12 @@ import zipfile
 import io
 import yaml
 import openpyxl
+import pandas as pd
 
 
 def clean_start_folder():
     # przenosze sie do folderu startowego
-    os.chdir(config['start_path'])
+    os.chdir(config['start'])
 
     # w liscie zapisuje pliki ktore sa w folderze start
     start_folder_files = list(os.listdir())
@@ -19,20 +20,20 @@ def clean_start_folder():
         regex = re.split("[.]", file_name)
         name = regex[0]
         extension = regex[1]
-        for folder_name in config['important_folders'].split(' '):
+        for folder_name in config['important_folders']:
             if folder_name.lower() in name.lower():
-                os.replace(config['start_path'] + '/' + file_name, config[folder_name] + '/' + file_name)
+                os.replace(config['start'] + '/' + file_name, config[folder_name] + '/' + file_name)
                 break
 
         # jezeli plik nie ma w nazwie nazwy folderu
-        if os.path.isfile(config['start_path'] + '/' + file_name):
+        if os.path.isfile(config['start'] + '/' + file_name):
             if extension in config['extensions']:
-                os.replace(config['start_path'] + '/' + file_name, config[extension] + '/' + file_name)
+                os.replace(config['start'] + '/' + file_name, config[extension] + '/' + file_name)
                 control_number_of_files(config[extension])
                 control_file_size(config[extension], file_name)
             else:
-                os.replace(config['start_path'] + '/' + file_name, config['others_path'] + '/' + file_name)
-                control_number_of_files(config['others_path'])
+                os.replace(config['start'] + '/' + file_name, config['others'] + '/' + file_name)
+                control_number_of_files(config['others'])
 
 
 def control_number_of_files(path):
@@ -56,7 +57,7 @@ def control_file_size(path, file_name):
 
 
 def print_folder_names():
-    for name in config['folder_names'].split(' '):
+    for name in config['folder_names']:
         print(name)
 
 
@@ -93,6 +94,15 @@ def print_xlsx_file(path, file_name):
         print()
 
 
+def get_folder_size(path):
+    size = 0
+    os.chdir(path)
+    for file_name in list(os.listdir()):
+        size += os.path.getsize(file_name)
+
+    return size
+
+
 def file_compress(path, inp_file_names, out_zip_file):
     os.chdir(path)
     # Select the compression mode ZIP_DEFLATED for compression
@@ -114,18 +124,33 @@ def file_compress(path, inp_file_names, out_zip_file):
         zf.close()
 
 
+def folders_report():
+    folders_list = []
+    folders_size = []
+
+    for name in config['folder_names']:
+        folders_list.append(name)
+        folders_size.append(get_folder_size(config[name]))
+    # print(folders_list)
+    d = {'Name': folders_list,
+         'Size': folders_size}
+    df = pd.DataFrame(data=d)
+
+    print(df)
+
+
 if __name__ == '__main__':
 
     with open('config.yaml', 'r') as fp:
         config = yaml.safe_load(fp)
 
-    print(config)
     clean_start_folder()
     user_input = input('Program do zarządzania folderami.\n'
                        'Zrobiłem już porządek w folderach. Co chcesz zrobić następne?\n'
                        '1. Spis folderów.\n'
                        '2. Stwórz własny plik tekstowy.\n'
-                       '3. Działania na folderach.\n')
+                       '3. Działania na folderach.\n'
+                       '4. Raport dla wszyskitch folderow.\n')
     match user_input:
         case '1':
             print_folder_names()
@@ -147,9 +172,9 @@ if __name__ == '__main__':
             user_input = input("Na ktorym folderze chcesz operowac:\n 1. text\n 2. data\n")
             chosen_path = ''
             if user_input == '1':
-                chosen_path = config['text_path']
+                chosen_path = config['text']
             elif user_input == '2':
-                chosen_path = config['data_path']
+                chosen_path = config['data']
 
             if chosen_path != '':
                 print_folder_content(chosen_path)
@@ -166,4 +191,5 @@ if __name__ == '__main__':
                         user_input = input("Podaj nazwę pliku zip\n")
                         file_compress(chosen_path, files_to_zip, user_input + '.zip')
 
-
+        case '4':
+            folders_report()
