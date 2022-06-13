@@ -7,6 +7,8 @@ import io
 import yaml
 import openpyxl
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def clean_start_folder():
@@ -100,7 +102,7 @@ def get_folder_size(path):
     for file_name in list(os.listdir()):
         size += os.path.getsize(file_name)
 
-    return size
+    return round(size/1000, 2)
 
 
 def file_compress(path, inp_file_names, out_zip_file):
@@ -124,19 +126,26 @@ def file_compress(path, inp_file_names, out_zip_file):
         zf.close()
 
 
-def folders_report():
+def all_folders_report():
     folders_list = []
     folders_size = []
 
     for name in config['folder_names']:
         folders_list.append(name)
         folders_size.append(get_folder_size(config[name]))
-    # print(folders_list)
+
     d = {'Name': folders_list,
-         'Size': folders_size}
+         'Size(KB)': folders_size}
     df = pd.DataFrame(data=d)
 
     print(df)
+    fig, ax = plt.subplots()
+    x = np.arange(len(folders_list))
+    x_bar = ax.bar(x, folders_size, label='Size(KB)')
+    ax.set_xticks(x, folders_list)
+    ax.legend()
+    ax.bar_label(x_bar)
+    plt.show()
 
 
 if __name__ == '__main__':
@@ -192,4 +201,4 @@ if __name__ == '__main__':
                         file_compress(chosen_path, files_to_zip, user_input + '.zip')
 
         case '4':
-            folders_report()
+            all_folders_report()
