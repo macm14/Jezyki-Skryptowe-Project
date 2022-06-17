@@ -11,9 +11,17 @@ class Report:
         self.config = c.read_file()
 
     def get_file_size(self, file_name):
+        """
+        :param file_name: File name
+        :return: File's size
+        """
         return round(os.path.getsize(file_name) / 1000, 2)
 
     def get_folder_size(self, path):
+        """
+        :param path: Directory path
+        :return: Sum of files' sizes in directory
+        """
         size = 0
         os.chdir(path)
         for file_name in list(os.listdir()):
@@ -22,6 +30,10 @@ class Report:
         return size
 
     def all_folders_report(self):
+        """
+        Creates lists with data about folders sizes. Gives them to create_plot method
+        :return: None
+        """
         folders_list = []
         folders_size = []
 
@@ -32,6 +44,11 @@ class Report:
         self.create_plot('Folder name', 'Folder size [KB]', folders_list, folders_size)
 
     def files_report(self, path):
+        """
+        Creates lists with data about files sizes. Gives them to create_plot method
+        :param path: Directory path
+        :return: None
+        """
         os.chdir(path)
         files_list = list(os.listdir())
         files_size = []
@@ -41,6 +58,14 @@ class Report:
         self.create_plot('File name', 'File size [KB]', files_list, files_size)
 
     def create_plot(self, x_name, y_name, names_list, sizes_list):
+        """
+        Creates a bar chart.
+        :param x_name: X-axis data
+        :param y_name: Y-axis data
+        :param names_list: List with folder or files names
+        :param sizes_list: List with folder or files sizes
+        :return: None
+        """
         d = {'Name': names_list,
              'Size': sizes_list}
         df = pd.DataFrame(data=d)

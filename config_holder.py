@@ -9,12 +9,21 @@ class Config:
         self.file = self.read_file()
 
     def read_file(self):
+        """
+        Takes no parameters\n
+        Returns dictionary with config file contents
+        """
         with open(self.config_name, 'r') as fp:
             config = yaml.safe_load(fp)
 
         return config
 
     def edit_file(self, module, folder_name):
+        """
+        :param module: Key from dictionary for extension folder or by-name folders
+        :param folder_name: New folder name
+        :return: None
+        """
         os.chdir(self.file['parent_directory'][0])
         self.file[module].append(folder_name)
         self.file[folder_name] = [self.file['parent_directory'][0] + '/' + folder_name]

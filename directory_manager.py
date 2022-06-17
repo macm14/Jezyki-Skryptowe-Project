@@ -12,6 +12,10 @@ class DirectoryManager:
         self.config = c.read_file()
 
     def clean_start_folder(self):
+        """
+        Sends files from start folder to appropriate folders.
+        :return: None
+        """
         # przenosze sie do folderu startowego
         os.chdir(self.config['start'][0])
 
@@ -38,6 +42,11 @@ class DirectoryManager:
                     self.control_number_of_files(self.config['others'][0])
 
     def control_number_of_files(self, path):
+        """
+        Checks the number of files in directory. Removes files if there are too much.
+        :param path: Directory path.
+        :return: None
+        """
         os.chdir(path)
         folder_files = list(os.listdir())
         if len(folder_files) > self.config['max_number_of_files'][0]:
@@ -50,16 +59,31 @@ class DirectoryManager:
             os.remove(file_to_remove)
 
     def control_file_size(self, path, file_name):
+        """
+        Compress the file if it is too big.
+        :param path: Directory path.
+        :param file_name: Name of the checked file.
+        :return: None
+        """
         os.chdir(path)
         if os.path.getsize(file_name) > self.config['max_size_of_file'][0]:
             self.file_compress(path, [file_name], file_name.split('.')[0] + '.zip')
             os.remove(file_name)
 
     def print_folder_names(self):
+        """
+        Display folders' names.
+        :return: None
+        """
         for name in self.config['folder_names']:
             print(name)
 
     def print_folder_content(self, path):
+        """
+        Display contents of directory.
+        :param path: Directory path.
+        :return: None
+        """
         os.chdir(path)
         folder_content = list(os.listdir())
 
@@ -67,6 +91,12 @@ class DirectoryManager:
             print(file_name)
 
     def print_file_content(self, path, file_name):
+        """
+        Display .txt or .csv file contents.
+        :param path: Directory path.
+        :param file_name: Name of displayed file.
+        :return: None
+        """
         if file_name.split('.')[1] == 'xlsx':
             self.print_xlsx_file(path, file_name)
             return
@@ -76,6 +106,12 @@ class DirectoryManager:
                 print(line)
 
     def print_xlsx_file(self, path, file_name):
+        """
+        Display .xlsx file contents.
+        :param path: Directory path.
+        :param file_name: Name of displayed file.
+        :return: None
+        """
         xlsx_file = path + '/' + file_name
         wb_obj = openpyxl.load_workbook(xlsx_file)
 
@@ -90,26 +126,33 @@ class DirectoryManager:
             print()
 
     def file_compress(self, path, inp_file_names, out_zip_file):
+        """
+        Compress selected files.
+        :param path: Directory path.
+        :param inp_file_names: List of files to compress.
+        :param out_zip_file: Name of the zip file.
+        :return: None
+        """
         os.chdir(path)
-        # Select the compression mode ZIP_DEFLATED for compression
-        # or zipfile.ZIP_STORED to just store the file
         compression = zipfile.ZIP_DEFLATED
 
         zf = zipfile.ZipFile(out_zip_file, mode="w")
 
         try:
             for file_to_write in inp_file_names:
-                # Add file to the zip file
-                # first parameter file to zip, second filename in zip
-                # print(f' *** Processing file {file_to_write}')
                 zf.write(file_to_write, file_to_write, compress_type=compression)
 
-        except FileNotFoundError as e:
-            print(f' *** Exception occurred during zip process - {e}')
+        except FileNotFoundError:
+            print("Nie znaleziono pliku.")
         finally:
             zf.close()
 
-    def createFolder(self, folder_name):
+    def create_folder(self, folder_name):
+        """
+        Creates folder.
+        :param folder_name: New folder name.
+        :return: None
+        """
         path = os.path.join(self.config['parent_directory'][0], folder_name)
         try:
             os.mkdir(path)
