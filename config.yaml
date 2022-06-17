@@ -1,4 +1,6 @@
-# extensions that my program can control
+parent_directory:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt
+
 extensions:
    - txt
    - csv
@@ -6,35 +8,48 @@ extensions:
    - pdf
    - xlsx
 
-#if the file name contain folder name, then it is moved to this folder
-important_folders:
+by_names:
    - PWr
 
-#folder names
 folder_names:
    - text
    - data
    - others
    - PWr
 
-#paths of folders used
-start: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/start
-text: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
-data: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
-others: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/others
+start:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/start
 
-#paths for extensions
-txt: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
-docx: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
-pdf: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
-csv: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
-xlsx: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
+text:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
 
-#paths for names
-PWr: C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/PWr
+data:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
 
-#max number of files in folder
-max_number_of_files: 10
+others:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/others
 
-#max file size in bytes
-max_size_of_file: 30000
+txt:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
+
+docx:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
+
+pdf:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/text
+
+csv:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
+
+xlsx:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/data
+
+PWr:
+   - C:/Users/Dell/Desktop/Jezyki Skryptowe lab/Projekt/PWr
+
+max_number_of_files:
+   - 10
+
+max_size_of_file:
+   - 30000
+
