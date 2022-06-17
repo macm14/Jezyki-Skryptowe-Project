@@ -1,3 +1,4 @@
+import os
 import yaml
 
 
@@ -12,3 +13,26 @@ class Config:
             config = yaml.safe_load(fp)
 
         return config
+
+    def edit_file(self, module, folder_name):
+        os.chdir(self.file['parent_directory'][0])
+        self.file[module].append(folder_name)
+        self.file[folder_name] = [self.file['parent_directory'][0] + '/' + folder_name]
+        self.file['folder_names'].append(folder_name)
+
+        print(self.file)
+
+        try:
+            file = open(self.config_name, 'w')
+            for key, list in self.file.items():
+                file.write(key)
+                file.write(':\n')
+                for element in list:
+                    file.write('   - ')
+                    file.write(str(element))
+                    file.write('\n')
+
+                file.write('\n')
+            file.close()
+        except FileExistsError:
+            print("Ten plik już istnieje")
