@@ -13,7 +13,7 @@ class DirectoryManager:
 
     def clean_start_folder(self):
         # przenosze sie do folderu startowego
-        os.chdir(self.config['start'])
+        os.chdir(self.config['start'][0])
 
         # w liscie zapisuje pliki ktore sa w folderze start
         start_folder_files = list(os.listdir())
@@ -22,25 +22,25 @@ class DirectoryManager:
             regex = re.split("[.]", file_name)
             name = regex[0]
             extension = regex[1]
-            for folder_name in self.config['important_folders']:
+            for folder_name in self.config['by_names']:
                 if folder_name.lower() in name.lower():
-                    os.replace(self.config['start'] + '/' + file_name, self.config[folder_name] + '/' + file_name)
+                    os.replace(self.config['start'][0] + '/' + file_name, self.config[folder_name][0] + '/' + file_name)
                     break
 
             # jezeli plik nie ma w nazwie nazwy folderu
-            if os.path.isfile(self.config['start'] + '/' + file_name):
+            if os.path.isfile(self.config['start'][0] + '/' + file_name):
                 if extension in self.config['extensions']:
-                    os.replace(self.config['start'] + '/' + file_name, self.config[extension] + '/' + file_name)
-                    self.control_number_of_files(config[extension])
-                    self.control_file_size(config[extension], file_name)
+                    os.replace(self.config['start'][0] + '/' + file_name, self.config[extension][0] + '/' + file_name)
+                    self.control_number_of_files(self.config[extension][0])
+                    self.control_file_size(self.config[extension][0], file_name)
                 else:
-                    os.replace(self.config['start'] + '/' + file_name, self.config['others'] + '/' + file_name)
-                    self.control_number_of_files(config['others'])
+                    os.replace(self.config['start'][0] + '/' + file_name, self.config['others'][0] + '/' + file_name)
+                    self.control_number_of_files(self.config['others'][0])
 
     def control_number_of_files(self, path):
         os.chdir(path)
         folder_files = list(os.listdir())
-        if len(folder_files) > self.config['max_number_of_files']:
+        if len(folder_files) > self.config['max_number_of_files'][0]:
             min_date = time.ctime(os.path.getctime(folder_files[0]))
             file_to_remove = folder_files[0]
             for file_name in folder_files:
@@ -51,7 +51,7 @@ class DirectoryManager:
 
     def control_file_size(self, path, file_name):
         os.chdir(path)
-        if os.path.getsize(file_name) > self.config['max_size_of_file']:
+        if os.path.getsize(file_name) > self.config['max_size_of_file'][0]:
             self.file_compress(path, [file_name], file_name.split('.')[0] + '.zip')
             os.remove(file_name)
 
@@ -108,3 +108,10 @@ class DirectoryManager:
             print(f' *** Exception occurred during zip process - {e}')
         finally:
             zf.close()
+
+    def createFolder(self, folder_name):
+        path = os.path.join(self.config['parent_directory'][0], folder_name)
+        try:
+            os.mkdir(path)
+        except FileExistsError:
+            print('Folder o tej nazwie istnieje')
