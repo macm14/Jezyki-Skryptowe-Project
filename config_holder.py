@@ -8,7 +8,7 @@ class Config:
         self.config_name = 'config.yaml'
         self.file = self.read_file()
 
-    def read_file(self):
+    def read_file(self) -> dict:
         """
         Takes no parameters\n
         Returns dictionary with config file contents
@@ -18,7 +18,7 @@ class Config:
 
         return config
 
-    def edit_file(self, module, folder_name):
+    def edit_file(self, module, folder_name) -> None:
         """
         :param module: Key from dictionary for extension folder or by-name folders
         :param folder_name: New folder name

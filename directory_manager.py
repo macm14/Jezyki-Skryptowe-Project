@@ -11,7 +11,7 @@ class DirectoryManager:
     def __init__(self, c: config_holder):
         self.config = c.read_file()
 
-    def clean_start_folder(self):
+    def clean_start_folder(self) -> None:
         """
         Sends files from start folder to appropriate folders.
         :return: None
@@ -41,7 +41,7 @@ class DirectoryManager:
                     os.replace(self.config['start'][0] + '/' + file_name, self.config['others'][0] + '/' + file_name)
                     self.control_number_of_files(self.config['others'][0])
 
-    def control_number_of_files(self, path):
+    def control_number_of_files(self, path: str) -> None:
         """
         Checks the number of files in directory. Removes files if there are too much.
         :param path: Directory path.
@@ -58,7 +58,7 @@ class DirectoryManager:
                     file_to_remove = file_name
             os.remove(file_to_remove)
 
-    def control_file_size(self, path, file_name):
+    def control_file_size(self, path: str, file_name: str) -> None:
         """
         Compress the file if it is too big.
         :param path: Directory path.
@@ -70,7 +70,7 @@ class DirectoryManager:
             self.file_compress(path, [file_name], file_name.split('.')[0] + '.zip')
             os.remove(file_name)
 
-    def print_folder_names(self):
+    def print_folder_names(self) -> None:
         """
         Display folders' names.
         :return: None
@@ -78,7 +78,7 @@ class DirectoryManager:
         for name in self.config['folder_names']:
             print(name)
 
-    def print_folder_content(self, path):
+    def print_folder_content(self, path: str) -> None:
         """
         Display contents of directory.
         :param path: Directory path.
@@ -90,7 +90,7 @@ class DirectoryManager:
         for file_name in folder_content:
             print(file_name)
 
-    def print_file_content(self, path, file_name):
+    def print_file_content(self, path: str, file_name: str) -> None:
         """
         Display .txt or .csv file contents.
         :param path: Directory path.
@@ -105,7 +105,7 @@ class DirectoryManager:
             for line in f:
                 print(line)
 
-    def print_xlsx_file(self, path, file_name):
+    def print_xlsx_file(self, path: str, file_name: str) -> None:
         """
         Display .xlsx file contents.
         :param path: Directory path.
@@ -125,7 +125,7 @@ class DirectoryManager:
                     print(cell.value, end="\t")
             print()
 
-    def file_compress(self, path, inp_file_names, out_zip_file):
+    def file_compress(self, path: str, inp_file_names: list[str], out_zip_file: str) -> None:
         """
         Compress selected files.
         :param path: Directory path.
@@ -147,7 +147,7 @@ class DirectoryManager:
         finally:
             zf.close()
 
-    def create_folder(self, folder_name):
+    def create_folder(self, folder_name: str) -> None:
         """
         Creates folder.
         :param folder_name: New folder name.
