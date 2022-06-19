@@ -25,7 +25,10 @@ class DirectoryManager:
         for file_name in start_folder_files:
             regex = re.split("[.]", file_name)
             name = regex[0]
-            extension = regex[1]
+            if len(regex) == 2:
+                extension = regex[1]
+            else:
+                extension = ''
             for folder_name in self.config['by_names']:
                 if folder_name.lower() in name.lower():
                     os.replace(self.config['start'][0] + '/' + file_name, self.config[folder_name][0] + '/' + file_name)
@@ -158,3 +161,14 @@ class DirectoryManager:
             os.mkdir(path)
         except FileExistsError:
             print('Folder o tej nazwie istnieje')
+
+    def create_file(self, file_name, text):
+        try:
+            file = open(file_name, 'x')
+
+            for line in text:
+                file.write(line)
+        except FileExistsError:
+            print("Ten plik już istnieje")
+        finally:
+            file.close()
