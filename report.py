@@ -78,5 +78,5 @@ class Report:
         ax.set_xlabel(x_name)
         ax.set_ylabel(y_name)
         ax.legend()
-        ax.bar_label(x_bar)
+        ax.bar_label(x_bar, fontsize=8)
         plt.show()

@@ -29,8 +29,6 @@ class Config:
         self.file[folder_name] = [self.file['parent_directory'][0] + '/' + folder_name]
         self.file['folder_names'].append(folder_name)
 
-        print(self.file)
-
         try:
             file = open(self.config_name, 'w')
             for key, list in self.file.items():
@@ -42,6 +40,9 @@ class Config:
                     file.write('\n')
 
                 file.write('\n')
-            file.close()
         except FileExistsError:
             print("Ten plik już istnieje")
+        finally:
+            file.close()
+
+        self.file = self.read_file()
