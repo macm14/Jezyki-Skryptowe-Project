@@ -9,13 +9,24 @@ import config_holder
 class DirectoryManager:
 
     def __init__(self, c: config_holder):
-        self.config = c.read_file()
+        self.holder = c
+        self.config = dict()
+        self.get_dict()
+
+    def update_dict(self):
+        """
+        Updates config field
+        :return: None
+        """
+        self.config = self.holder.read_file()
 
     def clean_start_folder(self) -> None:
         """
         Sends files from start folder to appropriate folders.
         :return: None
         """
+
+        self.update_dict()
         # przenosze sie do folderu startowego
         os.chdir(self.config['start'][0])
 
@@ -32,16 +43,19 @@ class DirectoryManager:
             for folder_name in self.config['by_names']:
                 if folder_name.lower() in name.lower():
                     os.replace(self.config['start'][0] + '/' + file_name, self.config[folder_name][0] + '/' + file_name)
+                    self.control_file_size(self.config[folder_name][0], file_name)
+                    self.control_number_of_files(self.config[folder_name][0])
                     break
 
             # jezeli plik nie ma w nazwie nazwy folderu
             if os.path.isfile(self.config['start'][0] + '/' + file_name):
                 if extension in self.config['extensions']:
                     os.replace(self.config['start'][0] + '/' + file_name, self.config[extension][0] + '/' + file_name)
-                    self.control_number_of_files(self.config[extension][0])
                     self.control_file_size(self.config[extension][0], file_name)
+                    self.control_number_of_files(self.config[extension][0])
                 else:
                     os.replace(self.config['start'][0] + '/' + file_name, self.config['others'][0] + '/' + file_name)
+                    self.control_file_size(self.config['others'][0], file_name)
                     self.control_number_of_files(self.config['others'][0])
 
     def control_number_of_files(self, path: str) -> None:
@@ -56,9 +70,12 @@ class DirectoryManager:
             min_date = time.ctime(os.path.getctime(folder_files[0]))
             file_to_remove = folder_files[0]
             for file_name in folder_files:
+                # print(time.ctime(os.path.getctime(file_name)))
                 if min_date > time.ctime(os.path.getctime(file_name)):
+                    # print('najstarszy = time.ctime(os.path.getctime(file_name))')
                     min_date = time.ctime(os.path.getctime(file_name))
                     file_to_remove = file_name
+            # print('usuwam ', file_to_remove)
             os.remove(file_to_remove)
 
     def control_file_size(self, path: str, file_name: str) -> None:
@@ -78,10 +95,11 @@ class DirectoryManager:
         Display folders' names.
         :return: None
         """
+        self.update_dict()
         for name in self.config['folder_names']:
             print(name)
 
-    def print_folder_content(self, path: str) -> None:
+    def print_folder_content(self, path: str) -> bool:
         """
         Display contents of directory.
         :param path: Directory path.
@@ -89,9 +107,13 @@ class DirectoryManager:
         """
         os.chdir(path)
         folder_content = list(os.listdir())
-
+        if len(folder_content) == 0 :
+            print('Ten folder jest pusty')
+            return False
         for file_name in folder_content:
             print(file_name)
+
+        return True
 
     def print_file_content(self, path: str, file_name: str) -> None:
         """
@@ -100,13 +122,19 @@ class DirectoryManager:
         :param file_name: Name of displayed file.
         :return: None
         """
+        file_name = file_name + '.csv'
         if file_name.split('.')[1] == 'xlsx':
             self.print_xlsx_file(path, file_name)
             return
         os.chdir(path)
-        with open(file_name, "r") as f:
-            for line in f:
-                print(line)
+        try:
+            with open(file_name, "r") as f:
+                for line in f:
+                    print(line)
+        except FileNotFoundError:
+            print('Nie ma takiego pliku w tym folderze')
+        except UnicodeDecodeError:
+            print('Nie udało się odczytać zawartości tego pliku')
 
     def print_xlsx_file(self, path: str, file_name: str) -> None:
         """
@@ -163,6 +191,7 @@ class DirectoryManager:
             print('Folder o tej nazwie istnieje')
 
     def create_file(self, file_name, text):
+        os.chdir(self.config['txt'][0])
         try:
             file = open(file_name, 'x')
 
@@ -172,3 +201,4 @@ class DirectoryManager:
             print("Ten plik już istnieje")
         finally:
             file.close()
+            self.control_number_of_files(self.config['txt'][0])
