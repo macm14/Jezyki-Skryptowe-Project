@@ -11,7 +11,7 @@ class DirectoryManager:
     def __init__(self, c: config_holder):
         self.holder = c
         self.config = dict()
-        self.get_dict()
+        self.update_dict()
 
     def update_dict(self):
         """

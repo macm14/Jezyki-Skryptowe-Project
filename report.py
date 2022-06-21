@@ -8,7 +8,16 @@ import config_holder
 class Report:
 
     def __init__(self, c: config_holder):
-        self.config = c.read_file()
+        self.holder = c
+        self.config = dict()
+        self.update_dict()
+
+    def update_dict(self):
+        """
+        Updates config field
+        :return: None
+        """
+        self.config = self.holder.read_file()
 
     def get_file_size(self, file_name: str) -> float:
         """
@@ -34,6 +43,7 @@ class Report:
         Creates lists with data about folders sizes. Gives them to create_plot method
         :return: None
         """
+        self.update_dict()
         folders_list = []
         folders_size = []
 
@@ -49,6 +59,7 @@ class Report:
         :param path: Directory path
         :return: None
         """
+        self.update_dict()
         os.chdir(path)
         files_list = list(os.listdir())
         files_size = []
